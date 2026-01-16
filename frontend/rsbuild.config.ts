@@ -1,10 +1,11 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/rspack";
+import { pluginCssMinimizer } from "@rsbuild/plugin-css-minimizer";
 
 // https://rsbuild.dev/guide/basic/configure-rsbuild
 export default defineConfig({
-  plugins: [pluginReact()],
+  plugins: [pluginReact(), pluginCssMinimizer()],
   html: {
     favicon: "src/assets/favicon.ico",
     title: "Loco SaaS Starter",
@@ -15,13 +16,22 @@ export default defineConfig({
     },
   },
   tools: {
+    lightningcssLoader: false,
     rspack: {
+      experiments: {
+        css: true,
+      },
       plugins: [
         tanstackRouter({
           target: "react",
           autoCodeSplitting: true,
         }),
       ],
+    },
+    postcss: {
+      postcssOptions: {
+        plugins: ["@tailwindcss/postcss"],
+      },
     },
   },
   server: {

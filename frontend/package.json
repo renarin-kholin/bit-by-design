@@ -1,29 +1,32 @@
 {
-  "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "rsbuild dev --open",
-    "build": "rsbuild build",
-    "lint": "biome check src/",
-    "preview": "rsbuild preview"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5.90.18",
-    "@tanstack/react-router": "^1.150.0",
-    "@tanstack/react-router-devtools": "^1.150.0",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1",
-    "@rsbuild/core": "^1",
-    "@rsbuild/plugin-react": "^1",
-    "@tanstack/eslint-plugin-query": "^5.91.2",
-    "@tanstack/router-plugin": "^1.150.0",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "typescript": "^5"
-  }
+	"name": "frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "rsbuild dev --open",
+		"build": "rsbuild build",
+		"lint": "biome check src/",
+		"preview": "rsbuild preview"
+	},
+	"dependencies": {
+		"@rsbuild/plugin-css-minimizer": "^1.1.1",
+		"@tailwindcss/postcss": "^4.1.18",
+		"@tanstack/react-query": "^5.90.18",
+		"@tanstack/react-router": "^1.150.0",
+		"@tanstack/react-router-devtools": "^1.150.0",
+		"react": "^18",
+		"react-dom": "^18",
+		"tailwindcss": "^4.1.18"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1",
+		"@rsbuild/core": "^1",
+		"@rsbuild/plugin-react": "^1",
+		"@tanstack/eslint-plugin-query": "^5.91.2",
+		"@tanstack/router-plugin": "^1.150.0",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"typescript": "^5"
+	}
 }
