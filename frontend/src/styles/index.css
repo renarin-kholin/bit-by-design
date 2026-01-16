@@ -1,3 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
-.test {}
+:root {
+    --color-primary: #cbff1f;
+    --color-primary-dark: #738f17;
+    --color-background: #101010;
+    --color-error: #a22121;
+    --color-error-text: #8d2727;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* GSAP handles all animations. CSS transitions for hover states only. */
