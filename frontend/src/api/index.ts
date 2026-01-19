@@ -12,3 +12,12 @@ export {
     useResendOtp,
     useVerifyOtp,
 } from "./auth";
+
+export {
+    type CompetitionConfig,
+    type CompetitionState,
+    type CompetitionStatus,
+    configKeys,
+    getCompetitionStatus,
+    useCompetitionConfig,
+} from "./config";

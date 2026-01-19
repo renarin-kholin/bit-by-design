@@ -1,4 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import {
+    type CompetitionState,
+    type CompetitionStatus,
+    getCompetitionStatus,
+    useCompetitionConfig,
+} from "../api";
 
 interface CountdownTime {
     hours: number;
@@ -7,28 +13,11 @@ interface CountdownTime {
     isExpired: boolean;
 }
 
-// Mock config - replace with actual API endpoint
-const CONFIG = {
-    useMock: true,
-    // Set target date to 11 hours from now for demo purposes
-    mockTargetDate: new Date(Date.now() + 11 * 60 * 60 * 1000).toISOString(),
-};
-
-// Simulates fetching the submission deadline from API
-async function fetchSubmissionDeadline(): Promise<string> {
-    if (CONFIG.useMock) {
-        return CONFIG.mockTargetDate;
+function calculateTimeRemaining(targetDate: string | null): CountdownTime {
+    if (!targetDate) {
+        return { hours: 0, minutes: 0, seconds: 0, isExpired: true };
     }
 
-    const response = await fetch("/api/submissions/deadline");
-    if (!response.ok) {
-        throw new Error("Failed to fetch deadline");
-    }
-    const data = await response.json();
-    return data.deadline;
-}
-
-function calculateTimeRemaining(targetDate: string): CountdownTime {
     const now = new Date().getTime();
     const target = new Date(targetDate).getTime();
     const difference = target - now;
@@ -45,24 +34,32 @@ function calculateTimeRemaining(targetDate: string): CountdownTime {
 }
 
 export const countdownKeys = {
-    deadline: ["submissions", "deadline"] as const,
-    time: ["submissions", "countdown"] as const,
+    time: ["countdown", "time"] as const,
 };
 
-export function useCountdown() {
-    const queryClient = useQueryClient();
+export interface UseCountdownResult {
+    hours: number;
+    minutes: number;
+    seconds: number;
+    isExpired: boolean;
+    isLoading: boolean;
+    state: CompetitionState;
+    status: CompetitionStatus | null;
+    label: string;
+}
 
-    // Fetch the deadline once
-    const { data: targetDate } = useQuery({
-        queryKey: countdownKeys.deadline,
-        queryFn: fetchSubmissionDeadline,
-        staleTime: Number.POSITIVE_INFINITY, // Deadline doesn't change
-    });
+export function useCountdown(): UseCountdownResult {
+    // Fetch competition config
+    const { data: config, isLoading: configLoading } = useCompetitionConfig();
+
+    // Compute competition status from config
+    const status = config ? getCompetitionStatus(config) : null;
+    const targetDate = status?.countdown.targetDate ?? null;
 
     // Update countdown every second
     const { data: time } = useQuery({
-        queryKey: countdownKeys.time,
-        queryFn: () => calculateTimeRemaining(targetDate ?? ""),
+        queryKey: [...countdownKeys.time, targetDate],
+        queryFn: () => calculateTimeRemaining(targetDate),
         enabled: !!targetDate,
         refetchInterval: 1000,
         staleTime: 0,
@@ -72,7 +69,10 @@ export function useCountdown() {
         hours: time?.hours ?? 0,
         minutes: time?.minutes ?? 0,
         seconds: time?.seconds ?? 0,
-        isExpired: time?.isExpired ?? false,
-        isLoading: !targetDate,
+        isExpired: time?.isExpired ?? !targetDate,
+        isLoading: configLoading,
+        state: status?.state ?? "waiting_for_submissions",
+        status,
+        label: status?.countdown.label ?? "Loading...",
     };
 }

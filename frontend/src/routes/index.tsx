@@ -9,7 +9,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-	const { hours, minutes, seconds, isLoading } = useCountdown();
+	const { hours, minutes, seconds, isLoading, state, label, isExpired } =
+		useCountdown();
 
 	const contentRef = useRef<HTMLDivElement>(null);
 	const timerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +40,25 @@ function Index() {
 		);
 	}, []);
 
+	// Show leaderboard when competition is over
+	if (state === "competition_over" && !isLoading) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-screen px-4">
+				<div className="absolute top-6 sm:top-[60px] left-1/2 -translate-x-1/2 z-10">
+					<AuthButton />
+				</div>
+				<div ref={contentRef} className="text-center" style={{ opacity: 0 }}>
+					<p className="font-['Figtree',sans-serif] font-normal text-xl sm:text-2xl md:text-[32px] text-white mb-4 sm:mb-6">
+						Competition has ended!
+					</p>
+					<p className="font-['Figtree',sans-serif] text-lg text-white/70">
+						Leaderboard coming soon...
+					</p>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-4">
 			{/* Auth button - positioned at top center */}
@@ -49,7 +69,7 @@ function Index() {
 			{/* Main content */}
 			<div ref={contentRef} className="text-center" style={{ opacity: 0 }}>
 				<p className="font-['Figtree',sans-serif] font-normal text-xl sm:text-2xl md:text-[32px] text-white mb-4 sm:mb-6">
-					Submissions open in
+					{label}
 				</p>
 
 				<CountdownTimer
