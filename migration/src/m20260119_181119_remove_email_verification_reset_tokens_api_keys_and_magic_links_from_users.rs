@@ -21,12 +21,42 @@ impl MigrationTrait for Migration {
     async fn down(&self, m: &SchemaManager) -> Result<(), DbErr> {
         add_column(m, "users", "api_key", ColType::StringNull).await?;
         add_column(m, "users", "reset_token", ColType::StringNull).await?;
-        add_column(m, "users", "reset_sent_at", ColType::TimestampWithTimeZoneNull).await?;
+        add_column(
+            m,
+            "users",
+            "reset_sent_at",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
         add_column(m, "users", "email_verification_token", ColType::StringNull).await?;
-        add_column(m, "users", "email_verification_sent_at", ColType::TimestampWithTimeZoneNull).await?;
-        add_column(m, "users", "email_verified_at", ColType::TimestampWithTimeZoneNull).await?;
-        add_column(m, "users", "magic_link_token", ColType::TimestampWithTimeZoneNull).await?;
-        add_column(m, "users", "magic_link_expiration", ColType::TimestampWithTimeZoneNull).await?;
+        add_column(
+            m,
+            "users",
+            "email_verification_sent_at",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
+        add_column(
+            m,
+            "users",
+            "email_verified_at",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
+        add_column(
+            m,
+            "users",
+            "magic_link_token",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
+        add_column(
+            m,
+            "users",
+            "magic_link_expiration",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
         Ok(())
     }
 }

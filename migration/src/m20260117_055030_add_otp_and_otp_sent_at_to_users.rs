@@ -8,7 +8,13 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, m: &SchemaManager) -> Result<(), DbErr> {
         add_column(m, "users", "otp", ColType::StringNull).await?;
-        add_column(m, "users", "otp_sent_at", ColType::TimestampWithTimeZoneNull).await?;
+        add_column(
+            m,
+            "users",
+            "otp_sent_at",
+            ColType::TimestampWithTimeZoneNull,
+        )
+        .await?;
         Ok(())
     }
 

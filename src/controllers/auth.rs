@@ -35,7 +35,7 @@ async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -
 
     let mut valid = false;
     if let Some(otp) = &user.otp {
-        valid = if otp == &params.otp { true } else { false };
+        valid = otp == &params.otp;
         user = user.into_active_model().consume_otp(&ctx.db).await?;
     };
 

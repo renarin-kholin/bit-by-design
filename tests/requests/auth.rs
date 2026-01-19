@@ -55,14 +55,12 @@ async fn can_register() {
     .await;
 }
 
-
 #[tokio::test]
 #[serial]
 async fn login_with_un_existing_email() {
     configure_insta!();
 
     request::<App, _, _>(|request, _ctx| async move {
-      
         let login_response = request
             .post("/api/auth/login")
             .json(&serde_json::json!({
@@ -75,7 +73,6 @@ async fn login_with_un_existing_email() {
     })
     .await;
 }
-
 
 #[tokio::test]
 #[serial]
@@ -105,7 +102,6 @@ async fn can_get_current_user() {
     })
     .await;
 }
-
 
 #[tokio::test]
 #[serial]

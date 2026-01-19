@@ -1,5 +1,4 @@
 use bit_by_design::app::App;
-use dotenvy;
 use loco_rs::cli;
 use migration::Migrator;
 use tracing::info;

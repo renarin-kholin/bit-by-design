@@ -1,4 +1,4 @@
 mod users;
 
-mod configs;
 mod admins;
+mod configs;
