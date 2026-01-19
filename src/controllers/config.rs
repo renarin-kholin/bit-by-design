@@ -1,10 +1,13 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
+use crate::models::{
+    _entities::configs::{ActiveModel, Entity, Model},
+    admins, users,
+};
+use loco_rs::controller::extractor::auth;
 use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
-
-use crate::models::_entities::configs::{ActiveModel, Entity, Model};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
@@ -12,44 +15,35 @@ pub struct Params {
     pub submission_end: Option<DateTimeWithTimeZone>,
     pub voting_start: Option<DateTimeWithTimeZone>,
     pub voting_end: Option<DateTimeWithTimeZone>,
-    }
+}
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
-      item.submission_start = Set(self.submission_start);
-      item.submission_end = Set(self.submission_end);
-      item.voting_start = Set(self.voting_start);
-      item.voting_end = Set(self.voting_end);
-      }
+        item.submission_start = Set(self.submission_start);
+        item.submission_end = Set(self.submission_end);
+        item.voting_start = Set(self.voting_start);
+        item.voting_end = Set(self.voting_end);
+    }
 }
 
-async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
-    let item = Entity::find_by_id(id).one(&ctx.db).await?;
+async fn load_item(ctx: &AppContext) -> Result<Model> {
+    let item = Entity::find().one(&ctx.db).await?;
     item.ok_or_else(|| Error::NotFound)
 }
 
 #[debug_handler]
-pub async fn list(State(ctx): State<AppContext>) -> Result<Response> {
-    format::json(Entity::find().all(&ctx.db).await?)
-}
-
-#[debug_handler]
-pub async fn add(State(ctx): State<AppContext>, Json(params): Json<Params>) -> Result<Response> {
-    let mut item = ActiveModel {
-        ..Default::default()
-    };
-    params.update(&mut item);
-    let item = item.insert(&ctx.db).await?;
-    format::json(item)
-}
-
-#[debug_handler]
 pub async fn update(
-    Path(id): Path<i32>,
     State(ctx): State<AppContext>,
+    auth: auth::JWT,
     Json(params): Json<Params>,
 ) -> Result<Response> {
-    let item = load_item(&ctx, id).await?;
+    let user = users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    let is_admin = admins::Model::is_admin(&ctx.db, user.id).await?;
+    if !is_admin {
+        return unauthorized("unauthorized access");
+    }
+
+    let item = load_item(&ctx).await?;
     let mut item = item.into_active_model();
     params.update(&mut item);
     let item = item.update(&ctx.db).await?;
@@ -57,23 +51,13 @@ pub async fn update(
 }
 
 #[debug_handler]
-pub async fn remove(Path(id): Path<i32>, State(ctx): State<AppContext>) -> Result<Response> {
-    load_item(&ctx, id).await?.delete(&ctx.db).await?;
-    format::empty()
-}
-
-#[debug_handler]
-pub async fn get_one(Path(id): Path<i32>, State(ctx): State<AppContext>) -> Result<Response> {
-    format::json(load_item(&ctx, id).await?)
+pub async fn get_one(State(ctx): State<AppContext>) -> Result<Response> {
+    format::json(load_item(&ctx).await?)
 }
 
 pub fn routes() -> Routes {
     Routes::new()
-        .prefix("api/configs/")
-        .add("/", get(list))
-        .add("/", post(add))
-        .add("{id}", get(get_one))
-        .add("{id}", delete(remove))
-        .add("{id}", put(update))
-        .add("{id}", patch(update))
+        .prefix("api/config/")
+        .add("/", get(get_one))
+        .add("/", put(update))
 }

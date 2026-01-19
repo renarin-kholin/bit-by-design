@@ -1,3 +1,4 @@
 pub mod _entities;
-pub mod users;
 pub mod configs;
+pub mod users;
+pub mod admins;

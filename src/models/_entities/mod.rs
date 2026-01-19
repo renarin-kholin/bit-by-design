@@ -2,5 +2,6 @@
 
 pub mod prelude;
 
+pub mod admins;
 pub mod configs;
 pub mod users;
