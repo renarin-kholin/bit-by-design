@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "../ui";
 import { LogoutIcon, LoginIcon } from "../icons";
 import { useAuth } from "../../hooks";
+import { toast } from "react-hot-toast";
 
 export function AuthButton() {
 	const navigate = useNavigate();
@@ -10,6 +11,7 @@ export function AuthButton() {
 	const handleAuthAction = () => {
 		if (isAuthenticated) {
 			logout();
+			toast.success("Logged out successfully");
 		} else {
 			navigate({ to: "/login" });
 		}

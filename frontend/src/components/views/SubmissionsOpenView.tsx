@@ -1,5 +1,6 @@
 import { SubmissionForm, type SubmissionFormData } from "../forms";
 import { formatTimeRemaining } from "../../utils";
+import { toast } from "react-hot-toast";
 
 interface SubmissionsOpenViewProps {
 	hours: number;
@@ -29,7 +30,13 @@ export function SubmissionsOpenView({
 			templateComplianceConfirmed: data.templateComplianceConfirmed,
 			futureImprovements: data.futureImprovements || "(not provided)",
 		});
-		// TODO: Implement submission API call
+		const loadingToast = toast.loading("Uploading your submission...");
+		try {
+			// TODO: Implement submission API call
+			toast.success("Submission successful! Good luck.", { id: loadingToast });
+		} catch (error) {
+			toast.error("Upload failed. Please check your connection.", { id: loadingToast });
+		}
 	};
 
 	return (
