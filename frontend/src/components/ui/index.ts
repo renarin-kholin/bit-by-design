@@ -8,3 +8,4 @@ export { Spinner } from "./Spinner";
 export { AuthButton } from "./AuthButton";
 export { CountdownLabels, CountdownTimer } from "./CountdownTimer";
 export { SubmissionsBackground } from "./SubmissionsBackground";
+export { Modal } from "./Modal";

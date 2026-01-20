@@ -16,7 +16,7 @@ export function DashboardLayout({
 	background,
 }: DashboardLayoutProps) {
 	return (
-		<div className="flex flex-col items-center justify-start min-h-screen px-4 pt-32 pb-20 relative">
+		<div className="flex flex-col items-center justify-center min-h-screen px-4 pt-20 pb-12 relative">
 			{background}
 
 			{/* Auth button - positioned at top center */}

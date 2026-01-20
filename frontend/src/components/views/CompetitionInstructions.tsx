@@ -1,71 +1,76 @@
-import { useRef, useEffect } from "react";
-import gsap from "gsap";
 import { toast } from "react-hot-toast";
-import { Button } from "../ui";
+import { Button, Modal } from "../ui";
 import { ArrowRightIcon } from "../icons";
 
-export function CompetitionInstructions() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const FIGMA_LINK = "https://www.figma.com/community/file/1591156167480577666/bit-by-design-template";
+const FIGMA_LINK = "https://www.figma.com/community/file/1591156167480577666/bit-by-design-template";
 
-  useEffect(() => {
-    gsap.fromTo(
-      containerRef.current,
-      { opacity: 0, y: 20 },
-      { 
-        opacity: 1, 
-        y: 0, 
-        duration: 0.8, 
-        ease: "power2.out", 
-        delay: 0.6 
-      }
-    );
-  }, []);
+interface CompetitionInstructionsContentProps {
+  onCopyLink: () => void;
+}
 
+function CompetitionInstructionsContent({ onCopyLink }: CompetitionInstructionsContentProps) {
+  return (
+    <div className="flex flex-col gap-6 text-center sm:text-left">
+      <h3 className="font-['Figtree',sans-serif] font-semibold text-xl sm:text-2xl text-black tracking-tight text-center mb-2">
+        Submission Guidelines (Quick Rules)
+      </h3>
+      
+      <div className="space-y-6 text-sm sm:text-base text-black/60 font-['Figtree',sans-serif] leading-relaxed">
+        <div className="flex flex-col gap-4 text-left">
+          <p>
+            1. <span className="text-black font-medium">Individual Competition:</span> This is an individual competition. Only one submission per participant is allowed. All designs must be created during the event timeframe.
+          </p>
+          <p>
+            2. <span className="text-black font-medium">Use the Template:</span> Participants must use the official Figma template provided. You may freely customize colors, typography, and visual details.
+          </p>
+          <p>
+             However, please <span className="text-black font-bold underline underline-offset-4 decoration-[#ef4444]">do not change the dimensions</span> of the main frame or fixed elements in the template.
+          </p>
+          <p>
+            3. <span className="text-black font-medium">Submit Your Work:</span> Submit a Figma design link with view access enabled.
+          </p>
+        </div>
+        
+        <p className="italic text-black/40 border-t border-black/10 pt-4 text-center">
+          Once submitted, designs cannot be edited after the submission window closes.
+        </p>
+      </div>
+
+      <div className="flex justify-center pt-2">
+        <Button 
+          variant="primary" 
+          className="w-auto px-10 h-11 group gap-3"
+          onClick={onCopyLink}
+        >
+          Copy Template Link
+          <ArrowRightIcon className="transition-transform group-hover:translate-x-1" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function CompetitionInstructionsButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className="mt-8 text-white/50 hover:text-white transition-colors text-sm font-medium font-['Figtree',sans-serif] flex items-center gap-2 group"
+    >
+      <span className="w-5 h-5 rounded-full border border-white/30 group-hover:border-white/80 flex items-center justify-center text-[10px] transition-colors">i</span>
+      Competition Guidelines
+    </button>
+  );
+}
+
+export function CompetitionInstructionsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(FIGMA_LINK);
     toast.success("Template link copied to clipboard!");
   };
 
   return (
-    <div 
-      ref={containerRef} 
-      className="mt-16 sm:mt-24 mb-12 max-w-2xl text-center flex flex-col items-center gap-8 px-4"
-      style={{ opacity: 0 }}
-    >
-      <div className="flex flex-col gap-6">
-        <h3 className="font-['Figtree',sans-serif] font-semibold text-xl sm:text-2xl text-white tracking-tight">
-          Competition Guidelines
-        </h3>
-        
-        <div className="space-y-6 text-sm sm:text-base text-white/60 font-['Figtree',sans-serif] leading-relaxed">
-          <div className="flex flex-col gap-2">
-            <p>
-              1. <span className="text-white font-medium">Get the Template:</span> Copy the link below and open it in Figma Community to duplicate the official competition file.
-            </p>
-            <p>
-              2. <span className="text-white font-medium">Use the Plugin:</span> To generate your presentation mockup, search for the <span className="text-[#cbff1f] font-bold italic">Bit By Design</span> plugin in the Figma resources panel. Run the plugin while selecting your design frame to automatically render it into the mockup structure.
-            </p>
-          </div>
-          
-          <p>
-            You’re free to customize visual elements such as colors, border radius, and stroke widths to match your creative direction. However, please <span className="text-[#cbff1f] font-medium underline underline-offset-4">do not change the dimensions</span> of the main frame or the rectangles inside it, as these are required for consistency and judging.
-          </p>
-          
-          <p className="italic text-white/40 border-t border-white/10 pt-4">
-            Focus on bringing your unique ideas to life within the provided structure.
-          </p>
-        </div>
-      </div>
-
-      <Button 
-        variant="primary" 
-        className="w-auto px-10 h-11 group gap-3"
-        onClick={handleCopyLink}
-      >
-        Copy Template Link
-        <ArrowRightIcon className="transition-transform group-hover:translate-x-1" />
-      </Button>
-    </div>
+    <Modal isOpen={isOpen} onClose={onClose} className="p-6 sm:p-10">
+       <CompetitionInstructionsContent onCopyLink={handleCopyLink} />
+    </Modal>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout } from "../components/layouts";
 import { SubmissionsBackground } from "../components/ui";
@@ -5,7 +6,8 @@ import {
 	CountdownView,
 	CompetitionOverView,
 	SubmissionsOpenView,
-	CompetitionInstructions,
+	CompetitionInstructionsButton,
+	CompetitionInstructionsModal,
 } from "../components/views";
 import { useCountdown } from "../hooks";
 
@@ -15,6 +17,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
 	const { hours, minutes, seconds, isLoading, state, label } = useCountdown();
+	const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
 
 	// Determine background based on state
 	const background =
@@ -57,13 +60,19 @@ function Index() {
 
 	return (
 		<DashboardLayout background={background}>
-		<div className="flex flex-col items-center">
-			{renderContent()}
-			
-			{(state === "waiting_for_submissions" || state === "submissions_open") && (
-			<CompetitionInstructions />
-			)}
-		</div>
+			<div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
+				{renderContent()}
+				
+				{(state === "waiting_for_submissions" || state === "submissions_open") && (
+					<>
+						<CompetitionInstructionsButton onClick={() => setIsInstructionsOpen(true)} />
+						<CompetitionInstructionsModal 
+							isOpen={isInstructionsOpen} 
+							onClose={() => setIsInstructionsOpen(false)} 
+						/>
+					</>
+				)}
+			</div>
 		</DashboardLayout>
 	);
 }
