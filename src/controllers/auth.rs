@@ -36,7 +36,6 @@ async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -
     let mut valid = false;
     if let Some(otp) = &user.otp {
         valid = otp == &params.otp;
-        user = user.into_active_model().consume_otp(&ctx.db).await?;
     };
 
     if !valid {
@@ -48,7 +47,7 @@ async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -
     let token = user
         .generate_jwt(&jwt_secret.secret, jwt_secret.expiration)
         .or_else(|_| unauthorized("unauthorized!"))?;
-
+    user = user.into_active_model().consume_otp(&ctx.db).await?;
     format::json(LoginResponse::new(&user, &token))
 }
 #[debug_handler]
