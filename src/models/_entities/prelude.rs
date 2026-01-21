@@ -2,4 +2,5 @@
 
 pub use super::admins::Entity as Admins;
 pub use super::configs::Entity as Configs;
+pub use super::submissions::Entity as Submissions;
 pub use super::users::Entity as Users;

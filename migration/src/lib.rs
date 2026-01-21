@@ -8,6 +8,7 @@ mod m20260117_055030_add_otp_and_otp_sent_at_to_users;
 mod m20260119_181119_remove_email_verification_reset_tokens_api_keys_and_magic_links_from_users;
 mod m20260119_183916_configs;
 mod m20260119_185727_admins;
+mod m20260121_081258_submissions;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -20,6 +21,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20260119_181119_remove_email_verification_reset_tokens_api_keys_and_magic_links_from_users::Migration),
             Box::new(m20260119_183916_configs::Migration),
             Box::new(m20260119_185727_admins::Migration),
+            Box::new(m20260121_081258_submissions::Migration),
             // inject-above (do not remove this comment)
         ]
     }
