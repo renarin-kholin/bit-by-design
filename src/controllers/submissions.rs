@@ -47,7 +47,7 @@ async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
 // pub async fn list(State(ctx): State<AppContext>) -> Result<Response> {
 //     format::json(Entity::find().all(&ctx.db).await?)
 // }
-
+//TODO: Only accept submissions during submission period
 #[debug_handler]
 pub async fn add(
     auth: auth::JWT,

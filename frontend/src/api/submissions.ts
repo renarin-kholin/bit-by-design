@@ -31,14 +31,18 @@ export interface SubmissionResponse {
 }
 
 // --- API Functions ---
-async function createSubmission(data: SubmissionParams): Promise<SubmissionResponse> {
+async function createSubmission(
+    data: SubmissionParams,
+): Promise<SubmissionResponse> {
     return apiFetch("/submissions", {
         method: "POST",
         data,
     });
 }
 
-async function updateSubmission({ id, data }: { id: number; data: SubmissionParams }): Promise<SubmissionResponse> {
+async function updateSubmission(
+    { id, data }: { id: number; data: SubmissionParams },
+): Promise<SubmissionResponse> {
     return apiFetch(`/submissions/${id}`, {
         method: "PUT",
         data,

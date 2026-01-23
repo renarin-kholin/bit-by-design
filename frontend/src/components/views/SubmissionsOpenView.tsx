@@ -19,11 +19,15 @@ export function SubmissionsOpenView({
 	minutes,
 }: SubmissionsOpenViewProps) {
 	const timeRemaining = formatTimeRemaining(hours, minutes);
-	
+
 	const { data: existingSubmission, isLoading, refetch } = useMySubmission();
 	const [isEditing, setIsEditing] = useState(false);
-	const [formData, setFormData] = useState<SubmissionFormData | undefined>(undefined);
-	const [submittedImageUrl, setSubmittedImageUrl] = useState<string | undefined>(undefined);
+	const [formData, setFormData] = useState<SubmissionFormData | undefined>(
+		undefined,
+	);
+	const [submittedImageUrl, setSubmittedImageUrl] = useState<
+		string | undefined
+	>(undefined);
 
 	// Sync existing submission data to local state
 	useEffect(() => {
@@ -37,7 +41,8 @@ export function SubmissionsOpenView({
 				styleInterpretation: existingSubmission.style_interpretation,
 				keyTradeOff: existingSubmission.key_trade_off,
 				originalityConfirmed: existingSubmission.originality_confirmed,
-				templateComplianceConfirmed: existingSubmission.template_compliance_confirmed,
+				templateComplianceConfirmed:
+					existingSubmission.template_compliance_confirmed,
 				futureImprovements: existingSubmission.future_improvements || "",
 			});
 		}
@@ -84,9 +89,9 @@ export function SubmissionsOpenView({
 	}
 
 	return (
-		<SubmissionForm 
-			timeRemaining={timeRemaining} 
-			onSubmit={handleSubmit} 
+		<SubmissionForm
+			timeRemaining={timeRemaining}
+			onSubmit={handleSubmit}
 			initialData={formData}
 			initialImageUrl={submittedImageUrl}
 			existingSubmissionId={existingSubmission?.id}

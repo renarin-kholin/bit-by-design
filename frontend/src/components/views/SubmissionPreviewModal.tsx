@@ -87,10 +87,7 @@ export function SubmissionPreviewModal({
 				className="max-h-[90vh] overflow-y-auto"
 				style={{ opacity: 0 }}
 			>
-				<Card
-					animate={false}
-					className="w-[480px] max-w-[calc(100vw-32px)]"
-				>
+				<Card animate={false} className="w-[480px] max-w-[calc(100vw-32px)]">
 					<div className="flex flex-col gap-5">
 						{/* Header */}
 						<div className="flex items-start justify-between">

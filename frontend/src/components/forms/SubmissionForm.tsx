@@ -139,7 +139,9 @@ export function SubmissionForm({
 	const [currentStep, setCurrentStep] = useState(1);
 	const [errors, setErrors] = useState<Record<string, boolean>>({});
 	const [isTransitioning, setIsTransitioning] = useState(false);
-	const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(initialImageUrl);
+	const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(
+		initialImageUrl,
+	);
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const cardRef = useRef<HTMLDivElement>(null);
@@ -302,7 +304,9 @@ export function SubmissionForm({
 					setCurrentImageUrl(imageUrl);
 					toast.success("Image uploaded!", { id: uploadToastId });
 				} catch {
-					toast.error("Failed to upload image. Please try again.", { id: uploadToastId });
+					toast.error("Failed to upload image. Please try again.", {
+						id: uploadToastId,
+					});
 					return;
 				}
 			}
@@ -332,7 +336,11 @@ export function SubmissionForm({
 
 			onSubmit?.(formData, imageUrl);
 		} catch {
-			toast.error(isEditing ? "Failed to update. Please try again." : "Failed to submit. Please try again.");
+			toast.error(
+				isEditing
+					? "Failed to update. Please try again."
+					: "Failed to submit. Please try again.",
+			);
 		}
 	};
 
@@ -387,265 +395,272 @@ export function SubmissionForm({
 							<p className="text-center font-['Figtree',sans-serif] text-sm text-[#bababa]">
 								Please log in to submit your design.
 							</p>
-							<Button 
-								variant="primary" 
-								onClick={() => window.location.href = '/login'} // Or use navigate if available/passed
+							<Button
+								variant="primary"
+								onClick={() => (window.location.href = "/login")} // Or use navigate if available/passed
 								className="w-full max-w-[200px]"
 							>
 								Log In
 							</Button>
 						</div>
 					) : (
-					<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-						{/* Step indicator */}
-						<StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+						<form onSubmit={handleSubmit} className="flex flex-col gap-4">
+							{/* Step indicator */}
+							<StepIndicator
+								currentStep={currentStep}
+								totalSteps={TOTAL_STEPS}
+							/>
 
-						{/* Step header */}
-						<div className="text-left mb-2">
-							<CardTitle>{stepInfo[currentStep - 1].title}</CardTitle>
-							<CardDescription>
-								{stepInfo[currentStep - 1].description}
-							</CardDescription>
-						</div>
+							{/* Step header */}
+							<div className="text-left mb-2">
+								<CardTitle>{stepInfo[currentStep - 1].title}</CardTitle>
+								<CardDescription>
+									{stepInfo[currentStep - 1].description}
+								</CardDescription>
+							</div>
 
-						{/* Step content */}
-						<div
-							ref={contentRef}
-							className={`flex flex-col gap-4 ${isTransitioning ? "transitioning" : ""}`}
-						>
-							{/* Step 1: Design Submission */}
-							{currentStep === 1 && (
-								<div className="step-1 flex flex-col gap-4">
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Figma Design Link *
-										</label>
-										<Input
-											type="url"
-											placeholder="https://www.figma.com/design/..."
-											value={formData.figmaLink}
-											onChange={(e) => updateField("figmaLink", e.target.value)}
-											disabled={isSubmitting}
-											error={errors.figmaLink}
-										/>
-										{errors.figmaLink && (
-											<p className="mt-1 text-xs text-[#a22121] font-['Figtree',sans-serif]">
-												Please enter a valid Figma link with view access enabled
+							{/* Step content */}
+							<div
+								ref={contentRef}
+								className={`flex flex-col gap-4 ${isTransitioning ? "transitioning" : ""}`}
+							>
+								{/* Step 1: Design Submission */}
+								{currentStep === 1 && (
+									<div className="step-1 flex flex-col gap-4">
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Figma Design Link *
+											</label>
+											<Input
+												type="url"
+												placeholder="https://www.figma.com/design/..."
+												value={formData.figmaLink}
+												onChange={(e) =>
+													updateField("figmaLink", e.target.value)
+												}
+												disabled={isSubmitting}
+												error={errors.figmaLink}
+											/>
+											{errors.figmaLink && (
+												<p className="mt-1 text-xs text-[#a22121] font-['Figtree',sans-serif]">
+													Please enter a valid Figma link with view access
+													enabled
+												</p>
+											)}
+										</div>
+
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Final Design Image{" "}
+												<span className="text-[#bababa]">(optional)</span>
+											</label>
+											<FileUpload
+												value={formData.designImage}
+												onChange={(file) => updateField("designImage", file)}
+												accept="image/png,image/jpeg"
+												disabled={isSubmitting}
+												previewUrl={initialImageUrl}
+											/>
+											<p className="mt-1 text-xs text-[#bababa] font-['Figtree',sans-serif]">
+												PNG or JPG for quick preview during voting
+											</p>
+										</div>
+									</div>
+								)}
+
+								{/* Step 2: Design Rationale */}
+								{currentStep === 2 && (
+									<div className="step-2 flex flex-col gap-4">
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Target User & Primary Goal *
+											</label>
+											<Textarea
+												placeholder="Who is this design for and what action does it prioritize?"
+												value={formData.targetUserAndGoal}
+												onChange={(e) =>
+													updateField("targetUserAndGoal", e.target.value)
+												}
+												disabled={isSubmitting}
+												error={errors.targetUserAndGoal}
+												rows={2}
+												maxLength={500}
+											/>
+										</div>
+
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Layout & Visual Hierarchy *
+											</label>
+											<Textarea
+												placeholder="How is content structured and attention guided?"
+												value={formData.layoutExplanation}
+												onChange={(e) =>
+													updateField("layoutExplanation", e.target.value)
+												}
+												disabled={isSubmitting}
+												error={errors.layoutExplanation}
+												rows={2}
+												maxLength={500}
+											/>
+										</div>
+
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Design Style Interpretation *
+											</label>
+											<Textarea
+												placeholder="How did you understand and apply the assigned style?"
+												value={formData.styleInterpretation}
+												onChange={(e) =>
+													updateField("styleInterpretation", e.target.value)
+												}
+												disabled={isSubmitting}
+												error={errors.styleInterpretation}
+												rows={2}
+												maxLength={500}
+											/>
+										</div>
+
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Key Design Trade-Off *
+											</label>
+											<Input
+												placeholder="One intentional compromise you made"
+												value={formData.keyTradeOff}
+												onChange={(e) =>
+													updateField("keyTradeOff", e.target.value)
+												}
+												disabled={isSubmitting}
+												error={errors.keyTradeOff}
+												maxLength={200}
+											/>
+										</div>
+									</div>
+								)}
+
+								{/* Step 3: Confirmation */}
+								{currentStep === 3 && (
+									<div className="step-3 flex flex-col gap-4 py-2">
+										<div className="step-animate-item">
+											<Checkbox
+												label="I confirm that this design was created during the competition event and is my original work."
+												checked={formData.originalityConfirmed}
+												onChange={(e) =>
+													updateField("originalityConfirmed", e.target.checked)
+												}
+												disabled={isSubmitting}
+												error={errors.originalityConfirmed}
+											/>
+										</div>
+
+										<div className="step-animate-item">
+											<Checkbox
+												label="I confirm that the template dimensions have not been altered from the original specifications."
+												checked={formData.templateComplianceConfirmed}
+												onChange={(e) =>
+													updateField(
+														"templateComplianceConfirmed",
+														e.target.checked,
+													)
+												}
+												disabled={isSubmitting}
+												error={errors.templateComplianceConfirmed}
+											/>
+										</div>
+
+										{(errors.originalityConfirmed ||
+											errors.templateComplianceConfirmed) && (
+											<p className="text-xs text-[#a22121] font-['Figtree',sans-serif]">
+												Please confirm both requirements to continue
 											</p>
 										)}
 									</div>
+								)}
 
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Final Design Image{" "}
-											<span className="text-[#bababa]">(optional)</span>
-										</label>
-										<FileUpload
-											value={formData.designImage}
-											onChange={(file) => updateField("designImage", file)}
-											accept="image/png,image/jpeg"
-											disabled={isSubmitting}
-											previewUrl={initialImageUrl}
-										/>
-										<p className="mt-1 text-xs text-[#bababa] font-['Figtree',sans-serif]">
-											PNG or JPG for quick preview during voting
-										</p>
+								{/* Step 4: Optional Reflection */}
+								{currentStep === 4 && (
+									<div className="step-4 flex flex-col gap-4">
+										<div className="step-animate-item">
+											<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
+												Future Improvements{" "}
+												<span className="text-[#bababa]">(optional)</span>
+											</label>
+											<Textarea
+												placeholder="What would you improve with more time? This helps showcase your growth mindset."
+												value={formData.futureImprovements}
+												onChange={(e) =>
+													updateField("futureImprovements", e.target.value)
+												}
+												disabled={isSubmitting}
+												rows={4}
+												maxLength={1000}
+											/>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
+							</div>
 
-							{/* Step 2: Design Rationale */}
-							{currentStep === 2 && (
-								<div className="step-2 flex flex-col gap-4">
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Target User & Primary Goal *
-										</label>
-										<Textarea
-											placeholder="Who is this design for and what action does it prioritize?"
-											value={formData.targetUserAndGoal}
-											onChange={(e) =>
-												updateField("targetUserAndGoal", e.target.value)
-											}
-											disabled={isSubmitting}
-											error={errors.targetUserAndGoal}
-											rows={2}
-											maxLength={500}
-										/>
-									</div>
+							{/* Navigation buttons */}
+							<div className="flex gap-3 mt-2">
+								{onCancel && currentStep === 1 && (
+									<Button
+										type="button"
+										variant="secondary"
+										onClick={onCancel}
+										disabled={isMutating}
+										className="w-auto px-6"
+									>
+										Cancel
+									</Button>
+								)}
 
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Layout & Visual Hierarchy *
-										</label>
-										<Textarea
-											placeholder="How is content structured and attention guided?"
-											value={formData.layoutExplanation}
-											onChange={(e) =>
-												updateField("layoutExplanation", e.target.value)
-											}
-											disabled={isSubmitting}
-											error={errors.layoutExplanation}
-											rows={2}
-											maxLength={500}
-										/>
-									</div>
+								{currentStep > 1 && (
+									<Button
+										type="button"
+										variant="secondary"
+										onClick={handlePrev}
+										disabled={isMutating}
+										className="w-auto px-6"
+									>
+										<ChevronLeftIcon className="mr-1" />
+										Back
+									</Button>
+								)}
 
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Design Style Interpretation *
-										</label>
-										<Textarea
-											placeholder="How did you understand and apply the assigned style?"
-											value={formData.styleInterpretation}
-											onChange={(e) =>
-												updateField("styleInterpretation", e.target.value)
-											}
-											disabled={isSubmitting}
-											error={errors.styleInterpretation}
-											rows={2}
-											maxLength={500}
-										/>
-									</div>
+								{isLastStep ? (
+									<Button
+										type="submit"
+										variant="primary"
+										isLoading={isMutating}
+										disabled={isMutating}
+										className="flex-1 px-6 whitespace-nowrap"
+									>
+										{isEditing ? "Update" : "Submit"}
+										{!isMutating && <ArrowRightIcon className="ml-2" />}
+									</Button>
+								) : (
+									<Button
+										type="button"
+										variant="primary"
+										onClick={handleNext}
+										disabled={!isCurrentStepValid}
+										className="flex-1 px-6 whitespace-nowrap"
+									>
+										Continue
+										<ArrowRightIcon className="ml-2" />
+									</Button>
+								)}
+							</div>
 
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Key Design Trade-Off *
-										</label>
-										<Input
-											placeholder="One intentional compromise you made"
-											value={formData.keyTradeOff}
-											onChange={(e) =>
-												updateField("keyTradeOff", e.target.value)
-											}
-											disabled={isSubmitting}
-											error={errors.keyTradeOff}
-											maxLength={200}
-										/>
-									</div>
-								</div>
-							)}
-
-							{/* Step 3: Confirmation */}
-							{currentStep === 3 && (
-								<div className="step-3 flex flex-col gap-4 py-2">
-									<div className="step-animate-item">
-										<Checkbox
-											label="I confirm that this design was created during the competition event and is my original work."
-											checked={formData.originalityConfirmed}
-											onChange={(e) =>
-												updateField("originalityConfirmed", e.target.checked)
-											}
-											disabled={isSubmitting}
-											error={errors.originalityConfirmed}
-										/>
-									</div>
-
-									<div className="step-animate-item">
-										<Checkbox
-											label="I confirm that the template dimensions have not been altered from the original specifications."
-											checked={formData.templateComplianceConfirmed}
-											onChange={(e) =>
-												updateField(
-													"templateComplianceConfirmed",
-													e.target.checked,
-												)
-											}
-											disabled={isSubmitting}
-											error={errors.templateComplianceConfirmed}
-										/>
-									</div>
-
-									{(errors.originalityConfirmed ||
-										errors.templateComplianceConfirmed) && (
-										<p className="text-xs text-[#a22121] font-['Figtree',sans-serif]">
-											Please confirm both requirements to continue
-										</p>
-									)}
-								</div>
-							)}
-
-							{/* Step 4: Optional Reflection */}
-							{currentStep === 4 && (
-								<div className="step-4 flex flex-col gap-4">
-									<div className="step-animate-item">
-										<label className="block font-['Figtree',sans-serif] text-xs font-medium text-[#717171] mb-1.5">
-											Future Improvements{" "}
-											<span className="text-[#bababa]">(optional)</span>
-										</label>
-										<Textarea
-											placeholder="What would you improve with more time? This helps showcase your growth mindset."
-											value={formData.futureImprovements}
-											onChange={(e) =>
-												updateField("futureImprovements", e.target.value)
-											}
-											disabled={isSubmitting}
-											rows={4}
-											maxLength={1000}
-										/>
-									</div>
-								</div>
-							)}
-						</div>
-
-						{/* Navigation buttons */}
-						<div className="flex gap-3 mt-2">
-							{onCancel && currentStep === 1 && (
-								<Button
-									type="button"
-									variant="secondary"
-									onClick={onCancel}
-									disabled={isMutating}
-									className="w-auto px-6"
-								>
-									Cancel
-								</Button>
-							)}
-
-							{currentStep > 1 && (
-								<Button
-									type="button"
-									variant="secondary"
-									onClick={handlePrev}
-									disabled={isMutating}
-									className="w-auto px-6"
-								>
-									<ChevronLeftIcon className="mr-1" />
-									Back
-								</Button>
-							)}
-
-							{isLastStep ? (
-								<Button
-									type="submit"
-									variant="primary"
-									isLoading={isMutating}
-									disabled={isMutating}
-									className="flex-1 px-6 whitespace-nowrap"
-								>
-									{isEditing ? "Update" : "Submit"}
-									{!isMutating && <ArrowRightIcon className="ml-2" />}
-								</Button>
-							) : (
-								<Button
-									type="button"
-									variant="primary"
-									onClick={handleNext}
-									disabled={!isCurrentStepValid}
-									className="flex-1 px-6 whitespace-nowrap"
-								>
-									Continue
-									<ArrowRightIcon className="ml-2" />
-								</Button>
-							)}
-						</div>
-
-						{/* Step counter */}
-						<p className="text-center text-xs text-[#bababa] font-['Figtree',sans-serif]">
-							Step {currentStep} of {TOTAL_STEPS}
-							{currentStep === 4 && " (Optional)"}
-						</p>
-					</form>)}
+							{/* Step counter */}
+							<p className="text-center text-xs text-[#bababa] font-['Figtree',sans-serif]">
+								Step {currentStep} of {TOTAL_STEPS}
+								{currentStep === 4 && " (Optional)"}
+							</p>
+						</form>
+					)}
 				</Card>
 			</div>
 		</div>
