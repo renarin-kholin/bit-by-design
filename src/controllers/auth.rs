@@ -10,11 +10,8 @@ use std::sync::OnceLock;
 
 pub static EMAIL_DOMAIN_RE: OnceLock<Regex> = OnceLock::new();
 
-//TODO: Expand to include a more general email format not limited domains
 fn get_allow_email_domain_re() -> &'static Regex {
-    EMAIL_DOMAIN_RE.get_or_init(|| {
-        Regex::new(r"@example\.com$|@gmail\.com$").expect("Failed to compile regex")
-    })
+    EMAIL_DOMAIN_RE.get_or_init(|| Regex::new(r"^\S+@\S+\.\S+$").expect("Failed to compile regex"))
 }
 
 #[derive(Debug, Deserialize, Serialize)]

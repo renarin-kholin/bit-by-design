@@ -21,3 +21,5 @@ target/
 
 # .env files
 *.env
+#Any csv files
+*.csv
