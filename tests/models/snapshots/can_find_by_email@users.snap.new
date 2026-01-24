@@ -1,0 +1,8 @@
+---
+source: tests/models/users.rs
+assertion_line: 55
+expression: existing_user
+---
+Err(
+    EntityNotFound,
+)

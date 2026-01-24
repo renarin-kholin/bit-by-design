@@ -13,6 +13,7 @@ mod m20260123_163309_vote_assignments;
 mod m20260123_172521_votes;
 mod m20260123_214643_scores;
 mod m20260124_122842_add_show_leaderboard_to_configs;
+mod m20260124_223823_add_assigned_and_created_scores_to_configs;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -30,6 +31,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20260123_172521_votes::Migration),
             Box::new(m20260123_214643_scores::Migration),
             Box::new(m20260124_122842_add_show_leaderboard_to_configs::Migration),
+            Box::new(m20260124_223823_add_assigned_and_created_scores_to_configs::Migration),
             // inject-above (do not remove this comment)
         ]
     }

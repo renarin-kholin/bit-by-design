@@ -90,7 +90,7 @@ pub async fn update(
 ) -> Result<Response> {
     let user = users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
     let item = load_item(&ctx, id).await?;
-    let is_admin = admins::Model::is_admin(&ctx.db, item.user_id).await?;
+    let is_admin = admins::Model::is_admin(&ctx.db, user.id).await?;
     if item.user_id != user.id && !is_admin {
         return unauthorized("unauthorized access.");
     }

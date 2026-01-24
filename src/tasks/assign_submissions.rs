@@ -29,6 +29,13 @@ impl Task for AssignSubmissions {
             .await?;
 
         let n_submissions = all_submissions.len();
+
+        // Handle edge case: no submissions to assign
+        if n_submissions == 0 {
+            tracing::info!("No submissions to assign");
+            return Ok(());
+        }
+
         // let n_users = all_submissions.iter().count();
         let k = min(6, n_submissions - 1);
         let txn = ctx.db.begin().await?;

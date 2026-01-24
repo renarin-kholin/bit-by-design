@@ -67,6 +67,7 @@ impl Hooks for App {
         tasks.register(tasks::add_users::AddUsers);
         tasks.register(tasks::show_leaderboard::ShowLeaderboard);
         tasks.register(tasks::update_timings::UpdateTimings);
+        tasks.register(tasks::assign_and_gen::AssignAndGen);
         // tasks-inject (do not remove)
     }
     async fn truncate(ctx: &AppContext) -> Result<()> {

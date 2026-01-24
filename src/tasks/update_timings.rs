@@ -30,6 +30,8 @@ impl Task for UpdateTimings {
         } else {
             configs::ActiveModel {
                 show_leaderboard: Set(false),
+                assigned: Set(false),
+                created_scores: Set(false),
                 ..Default::default()
             }
         };

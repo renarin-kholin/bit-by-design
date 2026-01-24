@@ -15,6 +15,8 @@ pub struct Model {
     pub voting_start: Option<DateTimeWithTimeZone>,
     pub voting_end: Option<DateTimeWithTimeZone>,
     pub show_leaderboard: bool,
+    pub assigned: bool,
+    pub created_scores: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -6,14 +6,12 @@ use serial_test::serial;
 
 #[tokio::test]
 #[serial]
-async fn test_can_run_add_users_rs() {
+async fn test_can_run_assign_and_gen() {
     let boot = boot_test::<App>().await.unwrap();
 
-    assert!(run_task::<App>(
-        &boot.app_context,
-        Some(&"add_users".to_string()),
-        &task::Vars::default()
-    )
-    .await
-    .is_ok());
+    assert!(
+        run_task::<App>(&boot.app_context, Some(&"assign_and_gen".to_string()), &task::Vars::default())
+            .await
+            .is_ok()
+    );
 }
