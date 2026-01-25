@@ -46,7 +46,8 @@ impl Task for AssignSubmissions {
             while reviews_assigned < k {
                 let target_i = (u_i + offset) % n_submissions;
                 let target_submission = all_submissions[target_i].clone();
-                if target_submission.user_id != user.id {
+                // user.user_id is the submitting user's ID (since user is a submission model from the join)
+                if target_submission.user_id != user.user_id {
                     let new_assignment = vote_assignments::ActiveModel {
                         user_id: Set(user.user_id),
                         submission_id: Set(target_submission.id),
