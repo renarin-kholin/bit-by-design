@@ -105,27 +105,39 @@ pub async fn update(
 ///Allow for loading submissions that have been assigned to a particular user.
 #[debug_handler]
 pub async fn get_one(
-    auth: auth::JWT,
+    auth: Result<auth::JWT, Error>,
     Path(id): Path<i32>,
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    let user = users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
-    let is_admin = admins::Model::is_admin(&ctx.db, user.id).await?;
+    let user = if let Ok(auth) = auth {
+        Some(users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?)
+    } else {
+        None
+    };
     let item = load_item(&ctx, id).await?;
-    let assignment = vote_assignments::Entity::find()
-        .filter(
-            Condition::all()
-                .add(vote_assignments::Column::UserId.eq(user.id))
-                .add(vote_assignments::Column::SubmissionId.eq(item.id)),
+    let (assignment, is_users_submission, is_admin) = if let Some(user) = user {
+        (
+            vote_assignments::Entity::find()
+                .filter(
+                    Condition::all()
+                        .add(vote_assignments::Column::UserId.eq(user.id))
+                        .add(vote_assignments::Column::SubmissionId.eq(item.id)),
+                )
+                .one(&ctx.db)
+                .await?,
+            item.user_id == user.id,
+            admins::Model::is_admin(&ctx.db, user.id).await?,
         )
-        .one(&ctx.db)
-        .await?;
+    } else {
+        (None, false, false)
+    };
     let config = configs::Entity::find().one(&ctx.db).await?;
     let mut show_leaderboard = false;
     if let Some(config) = config {
         show_leaderboard = config.show_leaderboard;
     }
-    if is_admin || item.user_id == user.id || assignment.is_some() || show_leaderboard {
+
+    if is_admin || is_users_submission || assignment.is_some() || show_leaderboard {
         return format::json(item);
     }
 

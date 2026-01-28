@@ -6,6 +6,7 @@ use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{
+    _entities::vote_assignments,
     _entities::votes::{self, ActiveModel, Entity, Model},
     configs, users,
 };
@@ -94,9 +95,14 @@ pub async fn add(
         .filter(votes::Column::SubmissionId.eq(params.submission_id))
         .one(&ctx.db)
         .await?;
-    if existing_vote.is_some() {
-        return bad_request("you have already voted on this submission");
-    }
+
+    // Check if user is assigned to vote on this submission (only needed for new votes)
+    let is_assigned = vote_assignments::Entity::find()
+        .filter(vote_assignments::Column::UserId.eq(user.id))
+        .filter(vote_assignments::Column::SubmissionId.eq(params.submission_id))
+        .one(&ctx.db)
+        .await?
+        .is_some();
 
     // Check voting period
     let config = configs::Entity::find().one(&ctx.db).await?;
@@ -105,12 +111,22 @@ pub async fn add(
         let now = DateTimeWithTimeZone::from(now);
         if let (Some(vs), Some(ve)) = (config.voting_start, config.voting_end) {
             if vs <= now && now <= ve {
-                let mut item = ActiveModel {
-                    ..Default::default()
-                };
-                params.update(&mut item, user.id);
-                let item = item.insert(&ctx.db).await?;
-                return format::json(item);
+                // Update existing vote or create new one
+                if let Some(existing) = existing_vote {
+                    let mut item = existing.into_active_model();
+                    params.update(&mut item, user.id);
+                    let item = item.update(&ctx.db).await?;
+                    return format::json(item);
+                } else if is_assigned {
+                    let mut item = ActiveModel {
+                        ..Default::default()
+                    };
+                    params.update(&mut item, user.id);
+                    let item = item.insert(&ctx.db).await?;
+                    return format::json(item);
+                } else {
+                    return bad_request("you are not assigned to vote on this submission");
+                }
             }
         }
     }
